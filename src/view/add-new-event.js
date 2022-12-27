@@ -1,4 +1,6 @@
-export function createNewEventTemplate() {
+import AbstractView from './abstract';
+
+function createNewEventTemplate() {
   return `<form class="event event--edit" action="#" method="post">
     <header class="event__header">
       <div class="event__type-wrapper">
@@ -164,4 +166,10 @@ export function createNewEventTemplate() {
       </section>
     </section>
   </form>`;
+}
+
+export default class AddNewEvent extends AbstractView {
+  getTemplate() {
+    return createNewEventTemplate();
+  }
 }

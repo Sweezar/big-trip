@@ -1,5 +1,6 @@
 import dayjs from 'dayjs';
 import { getTimeFromMins } from '../utils/utils';
+import AbstractView from './abstract';
 
 function createOfferTemplate(offer) {
   const {title, price} = offer;
@@ -11,7 +12,7 @@ function createOfferTemplate(offer) {
   </li>`;
 }
 
-export function createEventTemplate(event) {
+function createEventTemplate(event) {
   const {basePrice, dateFrom, dateTo, destination, isFavorite, offers, type} = event;
   const eventDuration = dayjs(dateTo).diff(dayjs(dateFrom), 'm');
 
@@ -54,4 +55,15 @@ export function createEventTemplate(event) {
       </button>
     </div>
   </li>`;
+}
+
+export default class Event extends AbstractView {
+  constructor(event) {
+    super();
+    this._event = event;
+  }
+
+  getTemplate() {
+    return createEventTemplate(this._event);
+  }
 }

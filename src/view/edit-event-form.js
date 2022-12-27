@@ -1,4 +1,5 @@
 import dayjs from 'dayjs';
+import AbstractView from './abstract';
 
 function createOfferTemplate(offers) {
   const {title, price} = offers;
@@ -19,7 +20,7 @@ function createDestinationPhotoTemplate(picture) {
   return `<img class="event__photo" src="${src}" alt="Event photo">`;
 }
 
-export function createEditFormTemplate(event) {
+function createEditFormTemplate(event) {
   const {basePrice, dateFrom, dateTo, destination, offers, type} = event;
 
   const offerTemplate = offers.offers
@@ -151,4 +152,15 @@ export function createEditFormTemplate(event) {
       </section>
     </section>
   </form>`;
+}
+
+export default class EditForm extends AbstractView {
+  constructor(event) {
+    super();
+    this._event = event;
+  }
+
+  getTemplate() {
+    return createEditFormTemplate(this._event);
+  }
 }

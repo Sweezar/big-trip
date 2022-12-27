@@ -1,4 +1,6 @@
-export { getRandomArrayElement, randomNumber, shuffle, limitStr, createElement, updateItem, getTimeFromMins };
+import Abstract from '../view/abstract';
+
+export { getRandomArrayElement, randomNumber, shuffle, limitStr, createElement, updateItem, getTimeFromMins, render, replace, RenderPosition };
 
 function randomNumber(min, max) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
@@ -24,6 +26,34 @@ function createElement(template) {
   const newElement = document.createElement('div');
   newElement.innerHTML = template;
   return newElement.firstChild;
+}
+
+const RenderPosition = {
+  AFTERBEGIN: 'afterbegin',
+  BEFOREEND: 'beforeend',
+};
+
+function render(container, element, place) {
+  if (container instanceof Abstract) {
+    container = container.getElement();
+  }
+
+  if (element instanceof Abstract) {
+    element = element.getElement();
+  }
+
+  switch(place) {
+    case RenderPosition.AFTERBEGIN:
+      container.prepend(element);
+      break;
+    case RenderPosition.BEFOREEND:
+      container.append(element);
+      break;
+  }
+}
+
+function replace(oldElem, newElem) {
+  oldElem.parentNode.replaceChild(newElem, oldElem);
 }
 
 function updateItem(items, update) {

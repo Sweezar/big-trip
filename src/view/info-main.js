@@ -1,7 +1,8 @@
 import dayjs from 'dayjs';
 import minMax from 'dayjs/plugin/minMax';
+import AbstractView from './abstract';
 
-export function createInfoMainTemplate(events) {
+function createInfoMainTemplate(events) {
   dayjs.extend(minMax);
 
   const route = events.map((item) => {
@@ -21,4 +22,15 @@ export function createInfoMainTemplate(events) {
 
       <p class="trip-info__dates">${dayjs.min(timesFrom).format('MMM DD')}&nbsp;&mdash;&nbsp;${dayjs.max(timesTo).format('MMM DD')}</p>
     </div>`;
+}
+
+export default class InfoMain extends AbstractView {
+  constructor(events) {
+    super();
+    this._events = events;
+  }
+
+  getTemplate() {
+    return createInfoMainTemplate(this._events);
+  }
 }

@@ -1,39 +1,81 @@
-import { createInfoTemplate } from './view/info-container.js';
-import { createInfoMainTemplate } from './view/info-main.js';
-import { createCostTemplate } from './view/cost.js';
-import { createTabsTemplate } from './view/tabs.js';
-import { createFilterTemplate } from './view/filters.js';
-import { createSortTemplate } from './view/sort.js';
-import { createListTemplate } from './view/trip-list.js';
-import { createEditFormTemplate } from './view/edit-event-form.js';
-import { createEventTemplate } from './view/event.js';
 import { generatePoint } from './mock/event-mock.js';
+import { RenderPosition, render, replace } from './utils/utils.js';
+import InfoContainerView from './view/info-container.js';
+import InfoMainView from './view/info-main.js';
+import CostView from './view/cost.js';
+import TabsView from './view/tabs.js';
+import FilterView from './view/filters.js';
+import SortView from './view/sort.js';
+import ListView from './view/trip-list.js';
+import EditFormView from './view/edit-event-form.js';
+import EventView from './view/event.js';
 
 const EVENTS_COUNT = 4;
 const events = new Array(EVENTS_COUNT).fill().map(generatePoint);
 
-function render(container, template, place) {
-  container.insertAdjacentHTML(place, template);
-}
-
 const tripMain = document.querySelector('.trip-main');
-render(tripMain, createInfoTemplate(), 'afterBegin');
+const InfoContainer = new InfoContainerView();
+render(tripMain, InfoContainer, RenderPosition.AFTERBEGIN);
 
-const tripInfoContainer = document.querySelector('.trip-info');
-render(tripInfoContainer, createInfoMainTemplate(events), 'beforeend');
-render(tripInfoContainer, createCostTemplate(events), 'beforeend');
+const infoMain = new InfoMainView(events);
+const cost = new CostView(events);
+render(InfoContainer, infoMain, RenderPosition.BEFOREEND);
+render(InfoContainer, cost, RenderPosition.BEFOREEND);
 
 const navigation = document.querySelector('.trip-controls__navigation');
-render(navigation, createTabsTemplate(), 'beforeend');
-render(navigation, createFilterTemplate(), 'beforeend');
+const tabs = new TabsView();
+render(navigation, tabs, RenderPosition.BEFOREEND);
+
+const filter = new FilterView();
+render(navigation, filter, RenderPosition.BEFOREEND);
 
 const tripEventsContainer = document.querySelector('.trip-events');
-render(tripEventsContainer, createSortTemplate(), 'beforeend');
-render(tripEventsContainer, createListTemplate(), 'beforeend');
+const sort = new SortView();
+render(tripEventsContainer, sort, RenderPosition.BEFOREEND);
 
-const eventsList = document.querySelector('.trip-events__list');
-render(eventsList, createEditFormTemplate(events[0]), 'beforeend');
+const eventsList = new ListView();
+render(tripEventsContainer, eventsList, RenderPosition.BEFOREEND);
 
-for (let i = 1; i < EVENTS_COUNT; i++) {
-  render(eventsList, createEventTemplate(events[i]), 'beforeend');
+for (let i = 0; i < EVENTS_COUNT; i++) {
+  renderEvent(eventsList, events[i]);
 }
+
+function renderEvent(eventListElement, event) {
+  const eventCompanent = new EventView(event);
+  const eventEditCompanent = new EditFormView(event);
+
+  function replaceCardToForm() {
+    replace(eventCompanent.getElement(), eventEditCompanent.getElement());
+  }
+
+  function replaceFormToCard() {
+    replace(eventEditCompanent.getElement(), eventCompanent.getElement());
+  }
+
+  function onEscKeydown(evt) {
+    if (evt.key === 'Escape' || evt.key === 'Esc') {
+      evt.preventDefault();
+      replaceFormToCard();
+      document.removeEventListener('keydown', onEscKeydown);
+    }
+  }
+
+  eventCompanent.getElement().querySelector('.event__rollup-btn').addEventListener('click', () => {
+    replaceCardToForm();
+    document.addEventListener('keydown', onEscKeydown);
+  });
+
+  eventEditCompanent.getElement().querySelector('.event__rollup-btn').addEventListener('click', (evt) => {
+    evt.preventDefault();
+    replaceFormToCard();
+  });
+
+  eventEditCompanent.getElement().addEventListener('submit', (evt) => {
+    evt.preventDefault();
+    replaceFormToCard();
+  });
+
+  render(eventListElement, eventCompanent, RenderPosition.BEFOREEND);
+}
+
+
