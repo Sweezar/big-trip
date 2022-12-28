@@ -1,5 +1,5 @@
 import { generatePoint } from './mock/event-mock.js';
-import { RenderPosition, render, replace } from './utils/utils.js';
+import { RenderPosition, render, replace } from './utils/render.js';
 import InfoContainerView from './view/info-container.js';
 import InfoMainView from './view/info-main.js';
 import CostView from './view/cost.js';
@@ -66,18 +66,16 @@ function renderEvent(eventListElement, event) {
     }
   }
 
-  eventCompanent.getElement().querySelector('.event__rollup-btn').addEventListener('click', () => {
+  eventCompanent.setRollupClickHandler(() => {
     replaceCardToForm();
     document.addEventListener('keydown', onEscKeydown);
   });
 
-  eventEditCompanent.getElement().querySelector('.event__rollup-btn').addEventListener('click', (evt) => {
-    evt.preventDefault();
+  eventEditCompanent.setRollupClickHandler(() => {
     replaceFormToCard();
   });
 
-  eventEditCompanent.getElement().addEventListener('submit', (evt) => {
-    evt.preventDefault();
+  eventEditCompanent.setSubmitHandler(() => {
     replaceFormToCard();
   });
 
