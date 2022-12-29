@@ -25,5 +25,20 @@ export function render(container, element, place) {
 }
 
 export function replace(oldElem, newElem) {
+  if (oldElem instanceof Abstract) {
+    oldElem = oldElem.getElement();
+  }
+  if (newElem instanceof Abstract) {
+    newElem = newElem.getElement();
+  }
   oldElem.parentNode.replaceChild(newElem, oldElem);
+}
+
+export function remove(component) {
+  if(!(component instanceof Abstract)) {
+    throw new Error('Can remove only components!');
+  }
+
+  component.getElement().remove();
+  component.removeElement();
 }
