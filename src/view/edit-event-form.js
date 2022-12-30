@@ -1,12 +1,12 @@
 import dayjs from 'dayjs';
 import AbstractView from './abstract';
 
-function createOfferTemplate(offers) {
+function createOfferTemplate(offers, type) {
   const {title, price} = offers;
 
   return `<div class="event__offer-selector">
-    <input class="event__offer-checkbox  visually-hidden" id="event-offer-luggage-1" type="checkbox" name="event-offer-luggage" checked>
-    <label class="event__offer-label" for="event-offer-luggage-1">
+    <input class="event__offer-checkbox  visually-hidden" id="event-offer-${type}-1" type="checkbox" name="event-offer-${type}" checked>
+    <label class="event__offer-label" for="event-offer-${type}-1">
       <span class="event__offer-title">${title}</span>
       &plus;&euro;&nbsp;
       <span class="event__offer-price">${price}</span>
@@ -23,8 +23,8 @@ function createDestinationPhotoTemplate(picture) {
 function createEditFormTemplate(event) {
   const {basePrice, dateFrom, dateTo, destination, offers, type} = event;
 
-  const offerTemplate = offers.offers
-    .map((offer) => createOfferTemplate(offer))
+  const offerTemplate = offers
+    .map((offer) => createOfferTemplate(offer, type))
     .join('');
 
   const imgTemplate = destination.pictures

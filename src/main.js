@@ -13,5 +13,3 @@ headerPresenter.init(events);
 const tripEventsContainer = document.querySelector('.trip-events');
 const tripPresenter = new TripPresenter(tripEventsContainer);
 tripPresenter.init(events);
-
-

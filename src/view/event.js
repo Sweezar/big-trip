@@ -16,7 +16,7 @@ function createEventTemplate(event) {
   const {basePrice, dateFrom, dateTo, destination, isFavorite, offers, type} = event;
   const eventDuration = dayjs(dateTo).diff(dayjs(dateFrom), 'm');
 
-  const offerTemplate = offers.offers
+  const offerTemplate = offers
     .map((offer) => createOfferTemplate(offer))
     .join('');
 

@@ -30,18 +30,12 @@ export function generatePoint() {
 }
 
 function generateOffer() {
-  return {
-    type: `${getRandomArrayElement(POINTS)}`,
-    offers: [
-      {
-        title: 'Upgrade to a business class',
-        price: `${randomNumber(10, 150)}`,
-      }, {
-        title: 'Choose the radio station',
-        price: `${randomNumber(10, 50)}`,
-      },
-    ],
-  };
+  return [
+    {
+      title: 'Upgrade to a business class',
+      price: `${randomNumber(10, 150)}`,
+    },
+  ];
 }
 
 function generateDestination() {
