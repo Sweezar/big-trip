@@ -20,6 +20,7 @@
   },
   "dependencies": {
     "dayjs": "^1.11.7",
+    "nanoid": "^4.0.0",
     "webpack-dev-server": "^4.11.1"
   }
 }

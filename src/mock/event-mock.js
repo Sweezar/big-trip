@@ -1,5 +1,6 @@
 import { randomNumber, getRandomArrayElement } from '../utils/utils';
 import dayjs from 'dayjs';
+import { nanoid } from 'nanoid';
 
 const POINTS = [
   'Taxi' , 'Bus' , 'Train' , 'Ship' , 'Transport' , 'Drive' , 'Flight' , 'Check-in' , 'Sightseeing' , 'Restaurant',
@@ -22,7 +23,7 @@ export function generatePoint() {
     dateFrom: `${generateDate()}`,
     dateTo: `${dayjs(generateDate()).add(950, 'minutes').toDate()}`,
     destination: generateDestination(),
-    id: '0',
+    id: nanoid(),
     isFavorite: Boolean(randomNumber(0,1)),
     offers: generateOffer(),
     type: `${getRandomArrayElement(POINTS)}`,

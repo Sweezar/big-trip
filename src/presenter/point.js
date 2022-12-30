@@ -1,18 +1,76 @@
-import { RenderPosition, render, replace } from '../utils/render.js';
+import { RenderPosition, render, replace, remove } from '../utils/render.js';
 import EditFormView from '../view/edit-event-form.js';
 import EventView from '../view/event.js';
 
 export default class Point {
-  constructor(container) {
+  constructor(container, changeData) {
     this._container = container;
+    this._changeData = changeData;
+    this._eventCompanent = null;
+    this._eventEditCompanent = null;
+
     this._onEscKeydown = this._onEscKeydown.bind(this);
+    this._handleFavoriteClick = this._handleFavoriteClick.bind(this);
   }
 
   init(event) {
     this._event = event;
+
+    const prevEventCompanent = this._eventCompanent;
+    const prevEventEditCompanent = this._eventEditCompanent;
+
     this._eventCompanent = new EventView(this._event);
     this._eventEditCompanent = new EditFormView(this._event);
-    this._renderEvent();
+
+    this._eventCompanent.setRollupClickHandler(() => {
+      this._replaceCardToForm();
+      document.addEventListener('keydown', this._onEscKeydown);
+    });
+
+    this._eventCompanent.setFavoritClickHandler(() => {
+      this._handleFavoriteClick();
+    });
+
+    this._eventEditCompanent.setRollupClickHandler(() => {
+      this._replaceFormToCard();
+    });
+
+    this._eventEditCompanent.setSubmitHandler(() => {
+      this._replaceFormToCard();
+    });
+
+    if (prevEventCompanent === null || prevEventEditCompanent === null) {
+      this._renderEvent();
+      return;
+    }
+
+    if (this._container.getElement().contains(prevEventCompanent.getElement())) {
+      replace(prevEventCompanent, this._eventCompanent);
+    }
+
+    if (this._container.getElement().contains(prevEventEditCompanent.getElement())) {
+      replace(prevEventEditCompanent, this._eventEditCompanent);
+    }
+
+    remove(prevEventCompanent);
+    remove(prevEventEditCompanent);
+  }
+
+  destroy() {
+    remove(this._eventCompanent);
+    remove(this._eventEditCompanent);
+  }
+
+  _handleFavoriteClick() {
+    this._changeData(
+      Object.assign(
+        {},
+        this._event,
+        {
+          isFavorite: !this._event.isFavorite,
+        },
+      ),
+    );
   }
 
   _replaceCardToForm() {
@@ -32,19 +90,6 @@ export default class Point {
   }
 
   _renderEvent() {
-    this._eventCompanent.setRollupClickHandler(() => {
-      this._replaceCardToForm();
-      document.addEventListener('keydown', this._onEscKeydown);
-    });
-
-    this._eventEditCompanent.setRollupClickHandler(() => {
-      this._replaceFormToCard();
-    });
-
-    this._eventEditCompanent.setSubmitHandler(() => {
-      this._replaceFormToCard();
-    });
-
     render(this._container, this._eventCompanent, RenderPosition.BEFOREEND);
   }
 }
