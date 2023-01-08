@@ -1,4 +1,5 @@
-export { getRandomArrayElement, randomNumber, shuffle, limitStr, createElement, updateItem, getTimeFromMins};
+import dayjs from 'dayjs';
+export { getRandomArrayElement, randomNumber, shuffle, limitStr, createElement, updateItem, getTimeFromMins, sortBy};
 
 function randomNumber(min, max) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
@@ -60,4 +61,17 @@ function getTimeFromMins(mins) {
   return days + 'D ' + hours + 'H ' + minutes + 'M';
 }
 
+const sortBy = {
+  day(eventA, eventB) {
+    return dayjs(eventA.dateFrom).diff(dayjs(eventB.dateFrom));
+  },
+  time(timeA, timeB) {
+    const durationA = (dayjs(timeA.dateTo).diff(dayjs(timeA.dateFrom)));
+    const durationB = (dayjs(timeB.dateTo).diff(dayjs(timeB.dateFrom)));
+    return durationA - durationB;
+  },
+  price(priceA, priceB) {
+    return priceA.basePrice - priceB.basePrice;
+  },
+};
 
