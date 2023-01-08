@@ -2,12 +2,20 @@ import { RenderPosition, render, replace, remove } from '../utils/render.js';
 import EditFormView from '../view/edit-event-form.js';
 import EventView from '../view/event.js';
 
+const Mode = {
+  DEFAULT: 'DEFAULT',
+  EDITING: 'EDITING',
+};
+
 export default class Point {
-  constructor(container, changeData) {
+  constructor(container, changeData, changeMode) {
     this._container = container;
     this._changeData = changeData;
+    this._changeMode = changeMode;
+
     this._eventCompanent = null;
     this._eventEditCompanent = null;
+    this._mode = Mode.DEFAULT;
 
     this._onEscKeydown = this._onEscKeydown.bind(this);
     this._handleFavoriteClick = this._handleFavoriteClick.bind(this);
@@ -61,6 +69,12 @@ export default class Point {
     remove(this._eventEditCompanent);
   }
 
+  resetView() {
+    if(this._mode !== Mode.DEFAULT){
+      this._replaceFormToCard();
+    }
+  }
+
   _handleFavoriteClick() {
     this._changeData(
       Object.assign(
@@ -75,10 +89,13 @@ export default class Point {
 
   _replaceCardToForm() {
     replace(this._eventCompanent, this._eventEditCompanent);
+    this._changeMode();
+    this._mode = Mode.EDITING;
   }
 
   _replaceFormToCard() {
     replace(this._eventEditCompanent, this._eventCompanent);
+    this._mode = Mode.DEFAULT;
   }
 
   _onEscKeydown(evt) {
