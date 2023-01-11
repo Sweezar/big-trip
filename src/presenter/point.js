@@ -35,9 +35,9 @@ export default class Point {
       document.addEventListener('keydown', this._onEscKeydown);
     });
 
-    this._eventCompanent.setFavoritClickHandler(() => {
-      this._handleFavoriteClick();
-    });
+    this._eventCompanent.setFavoritClickHandler(this._handleFavoriteClick);
+
+    this._eventEditCompanent.restoreHandlers();
 
     this._eventEditCompanent.setRollupClickHandler(() => {
       this._replaceFormToCard();
@@ -95,6 +95,7 @@ export default class Point {
 
   _replaceFormToCard() {
     replace(this._eventEditCompanent, this._eventCompanent);
+    document.removeEventListener('keydown', this._onEscKeydown);
     this._mode = Mode.DEFAULT;
   }
 
@@ -102,7 +103,6 @@ export default class Point {
     if (evt.key === 'Escape' || evt.key === 'Esc') {
       evt.preventDefault();
       this._replaceFormToCard();
-      document.removeEventListener('keydown', this._onEscKeydown);
     }
   }
 

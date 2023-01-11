@@ -1,5 +1,5 @@
 import dayjs from 'dayjs';
-import AbstractView from './abstract';
+import SmartView from './smart.js';
 
 function createOfferTemplate(offers, type) {
   const {title, price} = offers;
@@ -154,16 +154,46 @@ function createEditFormTemplate(event) {
   </form>`;
 }
 
-export default class EditForm extends AbstractView {
+export default class EditForm extends SmartView {
   constructor(event) {
     super();
-    this._event = event;
+    this._data = event;
+
+    this._eventTypeChangeHandler = this._eventTypeChangeHandler.bind(this);
+    this._eventDestinationChangeHandler = this._eventDestinationChangeHandler.bind(this);
     this._rollupClickHandler = this._rollupClickHandler.bind(this);
     this._submitHandler = this._submitHandler.bind(this);
   }
 
   getTemplate() {
-    return createEditFormTemplate(this._event);
+    return createEditFormTemplate(this._data);
+  }
+
+  restoreHandlers() {
+    this._setInnerHandlers();
+
+    this.setRollupClickHandler(this._callback.rollupClick);
+    this.setSubmitHandler(this._callback.submit);
+  }
+
+  _setInnerHandlers() {
+    this.getElement().querySelector('.event__type-group').addEventListener('change', this._eventTypeChangeHandler);
+    this.getElement().querySelector('.event__input--destination').addEventListener('change', this._eventDestinationChangeHandler);
+  }
+
+  _eventTypeChangeHandler(evt) {
+    evt.preventDefault();
+    this.updateData({
+      type: evt.target.value,
+    });
+  }
+
+  _eventDestinationChangeHandler(evt) {
+    evt.preventDefault();
+    const destination = this._data.destination;
+    this.updateData({
+      destination: Object.assign({}, destination, {name: evt.target.value}),
+    });
   }
 
   _rollupClickHandler(evt) {
