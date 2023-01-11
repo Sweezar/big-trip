@@ -37,13 +37,12 @@ export default class Point {
 
     this._eventCompanent.setFavoritClickHandler(this._handleFavoriteClick);
 
-    this._eventEditCompanent.restoreHandlers();
-
     this._eventEditCompanent.setRollupClickHandler(() => {
       this._replaceFormToCard();
     });
 
-    this._eventEditCompanent.setSubmitHandler(() => {
+    this._eventEditCompanent.setSubmitHandler((data) => {
+      this._handleSubmit(data);
       this._replaceFormToCard();
     });
 
@@ -73,6 +72,16 @@ export default class Point {
     if(this._mode !== Mode.DEFAULT){
       this._replaceFormToCard();
     }
+  }
+
+  _handleSubmit(data) {
+    this._changeData(
+      Object.assign(
+        {},
+        this._event,
+        data,
+      ),
+    );
   }
 
   _handleFavoriteClick() {

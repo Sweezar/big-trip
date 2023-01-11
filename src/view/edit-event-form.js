@@ -1,5 +1,6 @@
 import dayjs from 'dayjs';
 import SmartView from './smart.js';
+import flatpickr from 'flatpickr';
 
 function createOfferTemplate(offers, type) {
   const {title, price} = offers;
@@ -158,11 +159,19 @@ export default class EditForm extends SmartView {
   constructor(event) {
     super();
     this._data = event;
+    this._datepickerTo = null;
+    this._datepickerFrom = null;
 
     this._eventTypeChangeHandler = this._eventTypeChangeHandler.bind(this);
     this._eventDestinationChangeHandler = this._eventDestinationChangeHandler.bind(this);
     this._rollupClickHandler = this._rollupClickHandler.bind(this);
     this._submitHandler = this._submitHandler.bind(this);
+    this._dateFromChangeHandler = this._dateFromChangeHandler.bind(this);
+    this._dateToChangeHandler = this._dateToChangeHandler.bind(this);
+
+    this._setInnerHandlers();
+    this._setDatepickerTo();
+    this._setDatepickerFrom();
   }
 
   getTemplate() {
@@ -172,6 +181,8 @@ export default class EditForm extends SmartView {
   restoreHandlers() {
     this._setInnerHandlers();
 
+    this._setDatepickerTo();
+    this._setDatepickerFrom();
     this.setRollupClickHandler(this._callback.rollupClick);
     this.setSubmitHandler(this._callback.submit);
   }
@@ -208,11 +219,55 @@ export default class EditForm extends SmartView {
 
   _submitHandler(evt) {
     evt.preventDefault();
-    this._callback.submit();
+    this._callback.submit(this._data);
   }
 
   setSubmitHandler(callback) {
     this._callback.submit = callback;
     this.getElement().addEventListener('submit', this._submitHandler);
+  }
+
+  _setDatepickerTo() {
+    if (this._datepickerTo) {
+      this._datepickerTo.destroy();
+      this._datepickerTo = null;
+    }
+
+    this._datepickerTo = flatpickr(
+      this.getElement().querySelector('#event-end-time-1'),
+      {
+        dateFormat: 'd/m/y H:i',
+        defaultDate: this._data.dateTo,
+        onChange: this._dateToChangeHandler,
+      },
+    );
+  }
+
+  _setDatepickerFrom() {
+    if (this._datepickerFrom) {
+      this._datepickerFrom.destroy();
+      this._datepickerFrom = null;
+    }
+
+    this._datepickerFrom = flatpickr(
+      this.getElement().querySelector('#event-start-time-1'),
+      {
+        dateFormat: 'd/m/y H:i',
+        defaultDate: this._data.dateFrom,
+        onChange: this._dateFromChangeHandler,
+      },
+    );
+  }
+
+  _dateFromChangeHandler([userDate]) {
+    this.updateData({
+      dateFrom: userDate,
+    });
+  }
+
+  _dateToChangeHandler([userDate]) {
+    this.updateData({
+      dateTo: userDate,
+    });
   }
 }
