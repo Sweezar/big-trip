@@ -238,6 +238,7 @@ export default class EditForm extends SmartView {
       {
         dateFormat: 'd/m/y H:i',
         defaultDate: this._data.dateTo,
+        minDate: this._data.dateFrom,
         onChange: this._dateToChangeHandler,
       },
     );
