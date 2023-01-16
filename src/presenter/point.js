@@ -1,3 +1,4 @@
+import { UpdateType, UserAction } from '../const.js';
 import { RenderPosition, render, replace, remove } from '../utils/render.js';
 import EditFormView from '../view/edit-event-form.js';
 import EventView from '../view/event.js';
@@ -19,6 +20,7 @@ export default class Point {
 
     this._onEscKeydown = this._onEscKeydown.bind(this);
     this._handleFavoriteClick = this._handleFavoriteClick.bind(this);
+    this._handleDeleteClick = this._handleDeleteClick.bind(this);
   }
 
   init(event) {
@@ -43,8 +45,9 @@ export default class Point {
 
     this._eventEditCompanent.setSubmitHandler((data) => {
       this._handleSubmit(data);
-      this._replaceFormToCard();
     });
+
+    this._eventEditCompanent.setDeleteClickHandler(this._handleDeleteClick);
 
     if (prevEventCompanent === null || prevEventEditCompanent === null) {
       this._renderEvent();
@@ -76,16 +79,17 @@ export default class Point {
 
   _handleSubmit(data) {
     this._changeData(
-      Object.assign(
-        {},
-        this._event,
-        data,
-      ),
+      UserAction.UPDATE_POINT,
+      UpdateType.MINOR,
+      data,
     );
+    this._replaceFormToCard();
   }
 
   _handleFavoriteClick() {
     this._changeData(
+      UserAction.UPDATE_POINT,
+      UpdateType.PATCH,
       Object.assign(
         {},
         this._event,
@@ -94,6 +98,10 @@ export default class Point {
         },
       ),
     );
+  }
+
+  _handleDeleteClick() {
+    this.destroy();
   }
 
   _replaceCardToForm() {
